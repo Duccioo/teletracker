@@ -1,5 +1,7 @@
 # Teletracker
 
+![Teletracker Intro](img/intro.png)
+
 [![PyPI version](https://img.shields.io/pypi/v/teletracker.svg)](https://pypi.org/project/teletracker)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -130,6 +132,12 @@ file_logger.send_file(
     caption='Daily report'
 )
 ```
+
+## TODO:
+- [ ] password-protect the bot token
+- [ ] too long messages are cut off
+- [ ] use a daemon background thread, using Python's internal QueueHandler.
+  
 
 ## 🙏 Acknowledgements
 
