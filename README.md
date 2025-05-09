@@ -1,137 +1,143 @@
-# ![tg_logo](https://raw.githubusercontent.com/otter18/tg_logger/master/img/telegram-icon.png) Telegram logger [![GitHub Repo stars](https://img.shields.io/github/stars/otter18/tg_logger?style=social)](https://github.com/otter18/tg_logger/stargazers)
-[![Pypi version](https://img.shields.io/pypi/v/tg-logger.svg)](https://pypi.org/project/tg-logger/)
-[![Downloads](https://static.pepy.tech/personalized-badge/tg-logger?period=total&units=international_system&left_color=grey&right_color=orange&left_text=Downloads)](https://pepy.tech/project/tg-logger)
-[![GitHub](https://img.shields.io/github/license/otter18/tg_logger)](https://github.com/otter18/tg_logger/blob/main/LICENSE)
-[![Documentation Status](https://readthedocs.org/projects/tg-logger/badge/?version=latest)](https://tg-logger.readthedocs.io/en/latest/?badge=latest)
+# Teletracker
 
-<!-- [![Pyversions](https://img.shields.io/pypi/pyversions/tg-logger.svg)](https://pypi.org/project/tg-logger/) -->
+[![PyPI version](https://img.shields.io/pypi/v/teletracker.svg)](https://pypi.org/project/teletracker)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Bridging python logging and files to tg bot
+A bridge between Python's `logging` module and Telegram: send log messages and files directly to your chat.
 
-Documentation is available at [Read the Docs](https://tg-logger.readthedocs.io/)
+## 📦 Installation
 
-Demo is available [@tg_logger_demo_bot](https://t.me/tg_logger_demo_bot), [[repo](https://github.com/otter18/tg-logger-demo-bot)]
+Install the package from PyPI with:
 
-![intro_img](https://raw.githubusercontent.com/otter18/tg_logger/main/img/intro.jpeg)
-
-## 🗂 Table of Contents
-- [Installation & Usage](#-installation--usage)
-- [Screenshot](#-screenshot)
-- [Examples](#-examples)
-    * [Simple logging](#simple-logging)
-    * [Flask logging](#flask-logging)
-    * [Setting extra parameters to handler](#setting-extra-parameters-to-handler)
-    * [TgFileLogger example](#tgfilelogger-example)
-- [FQA](#-fqa)
-    * [How to create a telegram bot?](#how-to-create-a-telegram-bot)
-    * [How to get **token** and **user_id**?](#how-to-get-token-and-user_id)
-
-## 🚀 Installation & Usage
-- Available by `pip install tg-logger`
-- Use with `import tg_logger`
-
-## 📱 Screenshot
-![example_scr](https://raw.githubusercontent.com/otter18/tg_logger/master/img/example_scr.png)
-
-## 📖 Examples
-### Simple logging
-```python
-import logging
-import tg_logger
-
-# Telegram data
-token = "1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-users = [1111111111]
-
-# Base logger
-logger = logging.getLogger('foo')
-logger.setLevel(logging.INFO)
-
-# Logging bridge setup
-tg_logger.setup(logger, token=token, users=users)
-
-# Test
-logger.info("Hello from tg_logger by otter18")
+```bash
+pip install teletracker
 ```
 
-### Flask logging
-```python
-from flask import Flask
-import logging
-import tg_logger
+## 🚀 Overview
 
-# Telegram data
-token = "1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-users = [1111111111]
+The library provides a handler for Python's logging framework and a dedicated class for sending files via Telegram.
 
-# Flask app setup
-app = Flask(__name__)
+### Main Classes
 
-app.logger.setLevel(logging.ERROR) # flask logger
-tg_logger.setup(app.logger, token=token, users=users) # bridge setup
+#### `UnifiedTgLogger`
 
+Inherits from `logging.Handler`; sends formatted log messages via Telegram.
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
-
-if __name__ == '__main__':
-    app.run()
-
-```
-
-### Setting extra parameters to handler
+Constructor:
 
 ```python
-import logging
-import tg_logger
-
-# Telegram data
-token = "1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-users = [1111111111]
-
-# Base logger
-logger = logging.getLogger('foo')
-logger.setLevel(logging.INFO)
-
-# Logging bridge setup
-handler = tg_logger.setup(logger, token=token, users=users)
-
-# Setting extra params
-handler.setLevel(logging.DEBUG)
-
-# Test
-logger.info("Hello from tg_logger by otter18")
-```
-
-### TgFileLogger example
-```python
-import tg_logger
-
-# Telegram data
-token = "1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-users = [1111111111]
-
-# TgFileLogger example
-tg_files_logger = tg_logger.TgFileLogger(
-    token=token,  # tg bot token
-    users=users,  # list of user_id
-    timeout=10  # 10 seconds by default
+UnifiedTgLogger(
+    token: str,
+    users: List[int],
+    timeout: int = 10,
+    level: int = logging.INFO,
+    log_emoji: Optional[str] = None,
+    use_random_log_emoji: bool = False,
+    disable_notification: bool = False,
+    disable_web_page_preview: bool = False
 )
-
-file_name = "test.txt"
-with open(file_name, 'w') as example_file:
-    example_file.write("Hello from tg_logger by otter18")
-
-tg_files_logger.send(file_name, "Test file")
 ```
 
-## 🔎 FQA
-### How to create a telegram bot? 
-- To create bot use official [BotFather](https://t.me/BotFather) bot (descibed [here](https://core.telegram.org/bots#6-botfather))
-### How to get **token** and **user_id**?
-- Use [@tg_logger_demo_bot](https://t.me/tg_logger_demo_bot) with command `/id`
-- Bot's **token** is shown after new bot is made
-- To get **user_id** use special bots (e.g. [@userinfobot](https://t.me/userinfobot), [@JsonDumpBot](https://t.me/JsonDumpBot))
+Parameters:
+
+- `token` – Telegram bot token.
+- `users` – List of `chat_id` to send logs to.
+- `timeout` – HTTP timeout in seconds.
+- `level` – Log level (default `INFO`).
+- `log_emoji` – Fixed emoji for all messages.
+- `use_random_log_emoji` – If `True`, chooses a random emoji.
+- `disable_notification` – Send silently.
+- `disable_web_page_preview` – Disable link previews.
+
+Methods:
+
+- `get_emoji(levelno: int) -> str`
+  Returns the emoji based on the log level or settings.
+
+- `emit(record: logging.LogRecord)`
+  Formats the record with HTML and sends the message to the bot. If `exc_info` is present, includes the traceback in a `<pre><code>` block.
+
+- `send_file(file_path: str, caption: str = '')`
+  Sends a file (document or image); delegates to `TgFileLogger`.
+
+- `setLevel(level: int)`
+  Dynamically changes the log level of the handler.
+
+- `update_users(users: List[int])`
+  Updates the list of users (chat_id) for messages and files.
+
+#### `TgFileLogger`
+
+Dedicated class for sending files via Telegram. Can be used directly or through `UnifiedTgLogger`.
+
+Constructor:
+
+```python
+TgFileLogger(
+    token: str,
+    users: List[int],
+    timeout: int = 10
+)
+```
+
+Main method:
+
+- `send(file_path: str, caption: str = '')`
+  Sends a document or image with an optional caption.
+
+## 📖 Usage Examples
+
+### Simple Logging
+
+```python
+import logging
+from teletracker.unified_logger import UnifiedTgLogger
+
+logger = logging.getLogger('app')
+logger.setLevel(logging.DEBUG)
+
+handler = UnifiedTgLogger(
+    token='YOUR_BOT_TOKEN_HERE',  # Replace with your bot token
+    users=[YOUR_CHAT_ID_HERE]     # Replace with your chat ID
+)
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+logger.info('Application started')
+logger.error('An error was recovered')
+
+try:
+    1/0
+except Exception:
+    logger.exception('Division by zero occurred')
+```
+
+### Sending Files
+
+```python
+from teletracker.unified_logger import UnifiedTgLogger
+
+# Assuming 'token' and 'users' are defined as in the simple logging example
+# token = 'YOUR_BOT_TOKEN_HERE'
+# users = [YOUR_CHAT_ID_HERE]
+
+file_logger = UnifiedTgLogger(token, users) # Or TgFileLogger(token, users)
+file_logger.send_file(
+    'report.txt',
+    caption='Daily report'
+)
+```
+
+## 🙏 Acknowledgements
+
+This project was originally forked from [otter18/tg_logger](https://github.com/otter18/tg_logger).
+The original library provided a great starting point. This fork was created because the original project was no longer actively maintained and lacked certain features.
+While the codebase has been significantly refactored and rewritten to add new functionalities and improvements, we acknowledge the foundational work of the original author.
+
+## 📜 License
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
 
